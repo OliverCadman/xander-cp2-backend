@@ -71,6 +71,10 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=244, null=True)
     cohort_number = models.IntegerField(choices=COHORT_CHOICES, null=True)
 
+    def __str__(self):
+        return f'Profile: {self.auth_user.email}'
+
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
