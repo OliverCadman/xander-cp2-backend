@@ -41,7 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Custom Apps
-    'core'
+    'core',
+    'user',
+
+    # Rest Framework/DRF Spectacular
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +139,13 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+
+}
