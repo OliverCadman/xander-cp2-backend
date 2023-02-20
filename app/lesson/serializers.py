@@ -13,8 +13,25 @@ class LanguageSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
+
+class TextBlockSerializer(serializers.ModelSerializer):
+    """Serializer for Text Blocks"""
+    class Meta:
+        model = models.TextBlock
+        fields = '__all__'
+    
+
+    def create(self, validated_data):
+        """Create a module."""
+
+        textblock = models.TextBlock.objects.create(**validated_data)
+        return textblock
+
+
 class LessonSerializer(serializers.ModelSerializer):
     """Serializer for Lessons"""
+
+    lesson_textblocks = TextBlockSerializer(many=True, required=False)
 
     class Meta:
         model = models.Lesson
@@ -33,6 +50,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     exercise_starter_code = serializers.SerializerMethodField()
     expected_output_code = serializers.SerializerMethodField()
+    exercise_textblocks = TextBlockSerializer(many=True, required=False)
 
     class Meta:
         model = models.Exercise
@@ -79,8 +97,6 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
         starter_code = client.read_object(f'{obj.expected_output}.txt')
         return starter_code
-
-    
     
     def write_to_s3_object(self, string):
 
@@ -122,20 +138,3 @@ class ModuleSerializer(serializers.ModelSerializer):
 
         module = models.Module.objects.create(**validated_data)
         return module
-
-
-
-class TextBlockSerializer(serializers.ModelSerializer):
-    """Serializer for Text Blocks"""
-    class Meta:
-        model = models.TextBlock
-        fields = '__all__'
-    
-
-    def create(self, validated_data):
-        """Create a module."""
-
-        textblock = models.TextBlock.objects.create(**validated_data)
-        return textblock
-
-

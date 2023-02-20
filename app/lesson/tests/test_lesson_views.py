@@ -298,6 +298,13 @@ class ExerciseListTests(TestCase):
                 exercise_name=f'Test Exercise {i}'
             )
 
+            models.TextBlock.objects.create(
+                exercise=exercise,
+                text='Test Text Block Paragraph',
+                paragraph_number=i,
+                text_format=1
+            )
+
             self.s3_client.put_object(
                 Bucket=self.bucket_name,
                 Body=test_starter_code,
@@ -315,3 +322,64 @@ class ExerciseListTests(TestCase):
             exercise.save()
 
         res = self.client.get(TOPIC_LIST_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        print(res.data)
+
+        topics = models.Topic.objects.all()
+        serializer = serializers.TopicSerializer(topics, many=True)
+        self.assertEqual(res.data, serializer.data)
+        
+    
+class LessonTests(TestCase):
+    """Tests for Lessons API"""
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@example.com',
+            password='testpass123'
+        )
+        self.client = APIClient()
+
+        self.client.force_authenticate(self.user)
+    
+    def test_lesson_post(self):
+        """Test POST request to Lesson List URL"""
+
+        topic = create_topic_with_module('Test Topic')
+
+        payload = {
+            'lesson_name': 'Test Lesson',
+            'topic': topic.id,
+            'lesson_textblocks': [
+                {
+                    'text': 'Test Lesson Textblock 1',
+                    'text_format': 1,
+                    'paragraph_number': 1
+                },
+                {
+                    'text': 'Test Lesson Textblock 2',
+                    'text_format': 1,
+                    'paragraph_number': 2,
+                },
+                {
+                    'text': 'Test Lesson Textblock 3',
+                    'text_format': 1,
+                    'paragraph_number': 3
+                }
+            ]
+        }
+
+        res = self.client.post(LESSON_LIST_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+        res = self.client.get(LESSON_LIST_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        lessons = models.Lesson.objects.all()
+        serializer = serializers.LessonSerializer(lessons, many=True)
+
+        self.assertEqual(res.data, serializer.data)
+
+
+
+

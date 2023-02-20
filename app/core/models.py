@@ -172,12 +172,12 @@ class TextBlock(models.Model):
 
     text = models.TextField()
     exercise = models.ForeignKey(
-        Exercise, null=True, on_delete=models.CASCADE, related_name='exercise_textblocks')
+        Exercise, null=True, blank=True, on_delete=models.CASCADE, related_name='exercise_textblocks')
     lesson = models.ForeignKey(
-        Lesson, null=True, on_delete=models.CASCADE, related_name='lesson_textblocks'
+        Lesson, null=True, blank=True, on_delete=models.CASCADE, related_name='lesson_textblocks'
     )
     text_format = models.IntegerField(choices=FORMAT_CHOICES)
     paragraph_number = models.IntegerField(null=True)
 
     def __str__(self):
-        return f'{self.topic}: Paragraph {self.paragraph_number}'
+        return f'Paragraph {self.paragraph_number}'
