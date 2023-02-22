@@ -12,7 +12,7 @@ class S3Client:
     def __init__(self, access_key, secret_key, region):
         self.access_key = access_key
         self.secret_key = secret_key
-        self.bucket_name = settings.AWS_BUCKET_NAME
+        self.bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
         self.region = region
     

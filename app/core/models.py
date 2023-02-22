@@ -8,6 +8,18 @@ from django.contrib.auth.models import (
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+import os
+import uuid
+
+
+def lesson_image_file_path(instance, filename):
+    """Generate new file path for a new recipe image."""
+
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'lesson_images', filename)
+
 
 class UserManager(BaseUserManager):
     """Custom Manager for User Model"""
@@ -163,19 +175,32 @@ class TextBlock(models.Model):
     TEXT = 1
     CODE = 2
     EDITOR = 3
+    PARAGRAPH = 4
+    HEADING_1 = 5
+    HEADING_2 = 6
+    HEADING_3 = 7
+    IMAGE = 8
 
     FORMAT_CHOICES = (
         (TEXT, 'Text'),
         (CODE, 'Code'),
-        (EDITOR, 'Code Editor')
+        (EDITOR, 'Code Editor'),
+        (PARAGRAPH, 'Paragraph'),
+        (HEADING_1, 'Heading 1'),
+        (HEADING_2, 'Heading 2'),
+        (HEADING_3, 'Heading 3'),
+        (IMAGE, 'Image')
     )
 
-    text = models.TextField()
+
+    text = models.TextField(null=True, blank=True)
     exercise = models.ForeignKey(
         Exercise, null=True, blank=True, on_delete=models.CASCADE, related_name='exercise_textblocks')
     lesson = models.ForeignKey(
         Lesson, null=True, blank=True, on_delete=models.CASCADE, related_name='lesson_textblocks'
     )
+    image = models.ImageField(null=True, upload_to=lesson_image_file_path)
+
     text_format = models.IntegerField(choices=FORMAT_CHOICES)
     paragraph_number = models.IntegerField(null=True)
 

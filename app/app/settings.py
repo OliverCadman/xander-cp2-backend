@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'http://ec2-18-224-39-198.us-east-2.compute.amazonaws.com/']
 
 # CSRF_COOKIE_DOMAIN = "0.0.0.0:8000"
 # CSRF_COOKIE_SECURE =  True
@@ -64,6 +64,9 @@ INSTALLED_APPS = [
 
     # CORS Headers
     'corsheaders',
+
+    # Django Storages (custom S3 storage for media files)
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -157,10 +160,15 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/vol/web/media'
 STATIC_ROOT = '/vol/web/static'
 
-if DEBUG:
-    AWS_BUCKET_NAME = 'test-bucket'
-else:
-    AWS_BUCKET_NAME = 'xander-lms-bucket'
+AWS_STORAGE_BUCKET_NAME = 'xander-lms-bucket'
+AWS_S3_REGION_NAME = 'eu-west-2'
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+MEDIAFILES_STORAGE = "custom_storages.MediaStorage"
+MEDIAFILES_LOCATION = "media"
+
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/"
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')

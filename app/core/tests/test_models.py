@@ -14,7 +14,8 @@ from core.models import (
     Topic, 
     TextBlock,
     Lesson,
-    Exercise
+    Exercise,
+    lesson_image_file_path
 )
 
 from unittest.mock import patch
@@ -221,6 +222,13 @@ class LMSModelTests(TestCase):
 
         self.assertEqual(textblock.lesson, lesson)
 
+    @patch('core.models.uuid.uuid4')
+    def test_lesson_file_name_uuid(self, mock_uuid):
+        """Test generating an image path."""
+        uuid = 'test_uuid'
+        mock_uuid.return_value = uuid
+        file_path = lesson_image_file_path(None, 'example.jpg')
+        self.assertEqual(file_path, f'uploads/lesson_images/{uuid}.jpg')
 
     def test_textblock_paragraph_num_increment(self):
         """

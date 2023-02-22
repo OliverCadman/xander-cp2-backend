@@ -282,7 +282,7 @@ class ExerciseListTests(TestCase):
 
     @mock_s3
     def test_get_exercises(self):
-        self.bucket_name = settings.AWS_BUCKET_NAME
+        self.bucket_name = settings.AWS_STORAGE_BUCKET_NAME
         self.s3_client.create_bucket(Bucket=self.bucket_name)
     
         for i in range(5):

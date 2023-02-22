@@ -14,9 +14,9 @@ EXPOSE 8000
 
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev gcc python3-dev musl-dev linux-headers && \
+        build-base postgresql-dev zlib zlib-dev gcc python3-dev musl-dev linux-headers && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [$DEV = "true"]; \
     then /py/bin/pip install -r /tmp/requirements.dev.txt; \

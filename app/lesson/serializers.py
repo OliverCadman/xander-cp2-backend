@@ -3,6 +3,8 @@ from core import models
 from lesson.client.S3Client import S3Client
 from django.conf import settings
 
+import os
+
 
 class LanguageSerializer(serializers.ModelSerializer):
     """Serializer for Language Model"""
@@ -16,9 +18,12 @@ class LanguageSerializer(serializers.ModelSerializer):
 
 class TextBlockSerializer(serializers.ModelSerializer):
     """Serializer for Text Blocks"""
+
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = models.TextBlock
-        fields = '__all__'
+        exclude = ['image']
     
 
     def create(self, validated_data):
@@ -26,7 +31,15 @@ class TextBlockSerializer(serializers.ModelSerializer):
 
         textblock = models.TextBlock.objects.create(**validated_data)
         return textblock
-
+    
+    def get_image_url(self, obj):
+        if obj.image:
+            BUCKET_URL = settings.AWS_S3_CUSTOM_DOMAIN
+            url = f'https://{BUCKET_URL}/{obj.image.name}'
+            return url
+        else:
+            return None
+ 
 
 class LessonSerializer(serializers.ModelSerializer):
     """Serializer for Lessons"""
@@ -63,10 +76,8 @@ class ExerciseSerializer(serializers.ModelSerializer):
         
         starter_code_id = self.write_to_s3_object(starter_code)
         if starter_code_id:
-            print('GOT STARTER CODE ID:', starter_code_id)
             expected_output_id = self.write_to_s3_object(expected_output)
             if expected_output_id:
-                print('GOT EXPECTED OUTPUT ID:', expected_output_id)
                 exercise = models.Exercise.objects.create(
                     **validated_data, 
                     starter_code=starter_code_id, 
