@@ -199,7 +199,7 @@ class TextBlock(models.Model):
     lesson = models.ForeignKey(
         Lesson, null=True, blank=True, on_delete=models.CASCADE, related_name='lesson_textblocks'
     )
-    image = models.ImageField(null=True, upload_to=lesson_image_file_path)
+    image = models.ImageField(null=True, blank=True, upload_to=lesson_image_file_path)
 
     text_format = models.IntegerField(choices=FORMAT_CHOICES)
     paragraph_number = models.IntegerField(null=True)
