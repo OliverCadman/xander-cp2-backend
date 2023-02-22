@@ -5,6 +5,21 @@ from django.utils.translation import gettext_lazy as _
 
 from core import models
 
+class TextBlockInline(admin.TabularInline):
+    """View TextBlocks in Lesson/Exercise Admin Pages"""
+
+    model = models.TextBlock
+    classes = ['collapse']
+
+class LessonAdmin(admin.ModelAdmin):
+
+    inlines = [TextBlockInline]
+
+
+class ExerciseAdmin(admin.ModelAdmin):
+
+    inlines = [TextBlockInline]
+
 
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
@@ -50,5 +65,5 @@ admin.site.register(models.Language)
 admin.site.register(models.Module)
 admin.site.register(models.Topic)
 admin.site.register(models.TextBlock)
-admin.site.register(models.Exercise)
-admin.site.register(models.Lesson)
+admin.site.register(models.Exercise, ExerciseAdmin)
+admin.site.register(models.Lesson, LessonAdmin)
