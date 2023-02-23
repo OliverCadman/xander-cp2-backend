@@ -138,6 +138,8 @@ class TopicSerializer(serializers.ModelSerializer):
 
 class ModuleSerializer(serializers.ModelSerializer):
     """Serializer for Modules"""
+
+    topics = TopicSerializer(many=True, required=False)
     
     class Meta:
         model = models.Module

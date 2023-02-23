@@ -246,6 +246,34 @@ class PrivateLessonAPITests(TestCase):
 
     #     self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
+    def test_get_module_lists_lessons(self):
+        topic = create_topic_with_module('Test Topic')
+        text = 'Test Text'
+        
+        for i in range(5):
+            lesson = models.Lesson.objects.create(
+                topic=topic,
+                lesson_name=f'Test Lesson {i}'
+            )
+
+            models.TextBlock.objects.create(
+                text=text,
+                lesson=lesson,
+                text_format=1,
+                paragraph_number=5
+            )
+        
+        res = self.client.get(MODULE_LIST_URL)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        module = models.Module.objects.all()
+        serializer = serializers.ModuleSerializer(module, many=True)
+
+        self.assertEqual(res.data, serializer.data)
+
+
+    
+
 
 class ExerciseListTests(TestCase):
     """
