@@ -129,7 +129,7 @@ class TopicSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = models.Topic
-        fields = ['topic_name', 'module', 'topic_exercises', 'lessons']
+        fields = '__all__'
     
     def create(self, validated_data):
         topic = models.Topic.objects.create(**validated_data)
